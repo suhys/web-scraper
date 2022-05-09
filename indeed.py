@@ -32,7 +32,9 @@ def extract_job_element(html):
     else:
         company = str(company.string)
     location = html.find("div", {"class":"companyLocation"}).text
-    job_id = html["data-jk"]
+    find_id = html.find("h2", {"class":"jobTitle"})
+    for id in find_id('a'):
+        job_id = (id["data-jk"])
     return {'title': title,'company': company, 'location':location, 'link': f"https://www.indeed.com/viewjob?jk={job_id}"}
 
 def extract_jobs(last_page):
@@ -41,7 +43,7 @@ def extract_jobs(last_page):
         print(f"Scrapping page{page}")
         result = requests.get(f"{URL}&start={page*LIMIT}")
         soup = BeautifulSoup(result.text, "html.parser")
-        results = soup.find_all("a", {"class":"tapItem"})
+        results = soup.find_all("div", {"class":"cardOutline"})
         for result in results:
             job = extract_job_element(result)
             jobs.append(job)
